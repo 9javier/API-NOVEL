@@ -1,41 +1,43 @@
 package com.example.prueba2.Modelo;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection="paquetes")
+@Entity
+@Table(name="paquetes")
 public class Paquetes {
 	@Id
 	@NotNull
-	private String id;
-	private String desc;
+	private int id;
+	private String descripcion;
 	private double precio;
 	
 	public Paquetes() {
 		
 	}
 
-	protected Paquetes(String desc, double precio) {
-		this.desc = desc;
+	protected Paquetes(String descripcion, double precio) {
+		this.descripcion = descripcion;
 		this.precio = precio;
 	}
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
-	public String getDesc() {
-		return desc;
+	public String getDescripcion() {
+		return descripcion;
 	}
 
-	public void setDesc(String desc) {
-		this.desc = desc;
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
 	}
 
 	public double getPrecio() {

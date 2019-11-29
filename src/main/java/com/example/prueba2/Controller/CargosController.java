@@ -1,15 +1,10 @@
 package com.example.prueba2.Controller;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Optional;
 
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.http.HttpHeaders;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,37 +14,39 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMethod;
+
 
 import com.example.prueba2.Modelo.Cargos;
-import com.example.prueba2.Modelo.Codes;
 import com.example.prueba2.Repository.CargosRepository;
-import com.example.prueba2.Repository.ClientesRepository;
+
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 
-@RestController
+
+@Controller
 @RequestMapping("/cargos")
 @CrossOrigin(origins = "*",methods= {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.DELETE})
 public class CargosController {
+@Autowired
 private CargosRepository cargosRepository;
 
-@Autowired
-private MongoOperations mongoOperations;
+/*@Autowired
+private MongoOperations mongoOperations;*/
 
 	public CargosController(CargosRepository cargosRepository) {
 		this.cargosRepository = cargosRepository;
 	}
 	
 	@GetMapping("/all")
-	public List<Cargos> getAll(){
-		List<Cargos> cargos = cargosRepository.findAll();
+	public @ResponseBody Iterable<Cargos> getAll(){
+		Iterable<Cargos> cargos = cargosRepository.findAll();
 		return cargos;
 	}
 	
 	@RequestMapping(value = "/nombre/{nombre}")
 	@GetMapping("/nombre/{nombre}")//Consultar estado de cuenta con el nombre del cliente
-	public List<Cargos> cargos(@PathVariable("nombre")String idcliente,@RequestHeader(value="Apikey") String token){
+	public @ResponseBody List<Cargos> cargos(@PathVariable("nombre")String idcliente,@RequestHeader(value="Apikey") String token){
 		List<Cargos> cargos = cargosRepository.findByNombre(idcliente,null);
 		if(token.equals("5d02b3e781562c489092c945")) {
 			//System.out.println("consulta correcta");
@@ -64,12 +61,12 @@ private MongoOperations mongoOperations;
 
 	
 	@GetMapping("/grupo/{grupo}")//Consultar estado de cuenta con el nombre del cliente
-	public List<Cargos> cargos(@PathVariable("grupo")String grupo){
+	public @ResponseBody List<Cargos> cargos(@PathVariable("grupo")String grupo){
 		List<Cargos> cargos = cargosRepository.findByGrupo(grupo,null);
 		
 		return cargos;
 	}
-	
+	/*
 	@GetMapping("/c/{nombre}")
 	public List<Cargos> getCargosNameLike(@PathVariable("nombre")String nombre){		
 		String tagName = "";
@@ -80,11 +77,17 @@ private MongoOperations mongoOperations;
 		
 		return cargos;
 		
+	}*/
+	@GetMapping("/name/{nombre}")
+	public @ResponseBody List<Cargos> getCargosNombreLike(@PathVariable("nombre")String nombre){
+	List<Cargos> cargos =	this.cargosRepository.findByNombreContaining(nombre,null);
+		
+		return cargos;
 	}
 	
 	@RequestMapping(value ="/codigo/{codigo}")
 	@GetMapping("/codigo/{codigo}")
-	public List<Cargos> getCargosCodigo(@PathVariable("codigo")int codigo,@RequestHeader(value="Apikey")String token){
+	public @ResponseBody List<Cargos> getCargosCodigo(@PathVariable("codigo")int codigo,@RequestHeader(value="Apikey")String token){
 		List<Cargos> cargos = cargosRepository.findByCodigo(codigo, null);
 		if(token.equals("5d02b3e781562c489092c945")) {
 			//api key correcto
@@ -95,18 +98,21 @@ private MongoOperations mongoOperations;
 	}
 	
 	@PostMapping
-	public String insertCargo(@RequestBody Cargos cargos) {
-		this.cargosRepository.insert(cargos);
+	public @ResponseBody String insertCargo(@RequestBody Cargos cargos) {
+		this.cargosRepository.save(cargos);
 		return "Accept";
 	}
 	
 	@PutMapping
-	public void updateCargo(@RequestBody Cargos cargos) {
+	public @ResponseBody String updateCargo(@RequestBody Cargos cargos) {
 		this.cargosRepository.save(cargos);
+		
+		return "Cargos updated";
 	}
-	@RequestMapping(value ="/d/{codigo}")
+	//@RequestMapping(value ="/d/{codigo}")
+	@Transactional
 	@DeleteMapping("/d/{codigo}")//Eliminar cargos por codigo de cuenta.
-	public String deleteCargo(@PathVariable("codigo") int id, @RequestHeader(value="Apikey")String token) {
+	public @ResponseBody String deleteCargo(@PathVariable("codigo") int id, @RequestHeader(value="Apikey")String token) {
 		String objeto;
 		if(token.equals("5d02b3e781562c489092c945")) {
 			this.cargosRepository.deleteByCodigo(id, null);
@@ -117,5 +123,37 @@ private MongoOperations mongoOperations;
 		}
 		return objeto;
 	}
+	
+	@RequestMapping(value ="/abono/{codigo}")
+	@GetMapping("/abono/{codigo}")
+	public @ResponseBody String AbonoByCodigo(@PathVariable("codigo")int codigo,
+		@RequestHeader(value="Apikey")String token,@RequestHeader(value="abono")double abono){
+		List<Cargos> cargos = cargosRepository.findByCodigo(codigo, null);
+		if(token.equals("5d02b3e781562c489092c945")) {
+			//api key correcto
+			double total = cargos.get(0).getTotal();
+			double totalFinal = total-abono;
+			cargos.get(0).setTotal(totalFinal);
+			
+			
+		Cargos c= new Cargos();
+		c.setCodigo(cargos.get(0).getCodigo());
+		c.setEmail(cargos.get(0).getEmail());
+		c.setGrupo(cargos.get(0).getGrupo());
+		c.setId(cargos.get(0).getId());
+		c.setNombre(cargos.get(0).getNombre());
+		c.setProductos(cargos.get(0).getProductos());
+		c.setTotal(cargos.get(0).getTotal());
+		updateCargo(c);
+		String res  ="{'total':"+cargos.get(0).getTotal()+"}";
+		return res;
+		}else {
+			return null;
+		}
+		
+	}
+	
+	
+	
 	
 }

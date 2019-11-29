@@ -1,6 +1,8 @@
 package com.example.prueba2.Controller;
+
 import java.util.List;
 import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,72 +18,63 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.example.prueba2.Modelo.Usuario;
-import com.example.prueba2.Repository.UsuarioRepository;
-
-
-
-
+import com.example.prueba2.Modelo.Users;
+import com.example.prueba2.Repository.UsersRepository;
 
 @Controller
-@RequestMapping(path="/usuario")
+@RequestMapping(path="/users")
 @CrossOrigin(origins = "*",methods= {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.DELETE})
-public class UsuarioController {
+public class UsersController {
+	
 	@Autowired 
-	private UsuarioRepository usuarioRepository;
+	private UsersRepository usersRepository;
 	
 	@GetMapping(path="/all")
-	public @ResponseBody Iterable<Usuario> getAllUsers(@RequestHeader(value="Apikey") String token) {
-		// This returns a JSON or XML with the users
-		if(token.equals("5d02b3e781562c489092c945")) {
-			//System.out.println("consulta correcta");
-		}else {//el token no es correcto
-			
-			return null;
-		}
-		Iterable<Usuario>  usuarios = usuarioRepository.findAll();
+	public @ResponseBody Iterable<Users> getAllUsers(@RequestHeader(value="Apikey") String token) {
+		
+		Iterable<Users>  usuarios = usersRepository.findAll();
 		return usuarios;
 		
 	}
 	
 	/*Obtner usuario ById*/	
 	@GetMapping("/id/{id}")
-	public @ResponseBody Optional<Usuario> getById(@PathVariable("id")int id){
+	public @ResponseBody Optional<Users> getById(@PathVariable("id")int id){
 	
-		Optional<Usuario> usuario = usuarioRepository.findById(id);
+		Optional<Users> usuario = usersRepository.findById(id);
 		return usuario;
 	}
 	
 	
 	@PostMapping
-	public @ResponseBody String insertarUsuario(@RequestBody  Usuario usuario) {
-		usuarioRepository.save(usuario);
-		List<Usuario> us = getUsuarioCliente(usuario.getCorreo());
+	public @ResponseBody String insertarUsuario(@RequestBody  Users usuario) {
+		usersRepository.save(usuario);
+		List<Users> us = getUsuarioCliente(usuario.getCorreo());
 		String objeto = "{'id':'"+us.get(0).getId()+"'}";//si se inserto correctamente retornamos el id del registro.
 		return objeto;
 	}
 	
 	@PutMapping//Actualizar usuario
-	public @ResponseBody String updatUsuario(@RequestBody Usuario usuario) {
-		this.usuarioRepository.save(usuario);
+	public @ResponseBody String updatUsuario(@RequestBody Users usuario) {
+		this.usersRepository.save(usuario);
 		return "user updated";
 	}
+	
 	@Transactional
 	@DeleteMapping("/{id}")//Eliminar Usuario
 	public  @ResponseBody String deleteUsuario(@PathVariable("id") int id) {
-		this.usuarioRepository.deleteById(id);
+		this.usersRepository.deleteById(id);
 		
 		return "user deleted";
 	}
 	
 	
-	@GetMapping("/correo/{correo}")//Consultar el usuario de un cliente para autenticarse
-	public @ResponseBody List<Usuario> getUsuarioCliente(@PathVariable("correo") String correo){
-		List<Usuario> usuario = this.usuarioRepository.findByCorreo(correo,null);
+	@GetMapping("/correo/{correo}")//Consultar el usuario por correo
+	public @ResponseBody List<Users> getUsuarioCliente(@PathVariable("correo") String correo){
+		List<Users> usuario = this.usersRepository.findByCorreo(correo,null);
 		
 		return usuario;
 	}
 	
-	
-	
+
 }

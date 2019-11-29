@@ -1,15 +1,17 @@
 package com.example.prueba2.Modelo;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection="codes")
+@Entity
+@Table(name ="codes")
 public class Codes {
 	@Id
 	@NotNull
-	private String id;
+	private int id;
 	private int codigo;
 	
 	public Codes() {
@@ -25,10 +27,10 @@ public class Codes {
 	public void setCodigo(int codigo) {
 		this.codigo = codigo;
 	}
-	public String getId() {
+	public int getId() {
 		return id;
 	}
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	

@@ -1,38 +1,38 @@
 package com.example.prueba2.Modelo;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-@Document(collection="usuarios")
+@Entity // This tells Hibernate to make a table out of this class
+@Table(name = "usuarios")
 public class Usuario {
-
 	@Id
 	@NotNull
-	private String id;
+	private int id;
 	private String correo;
 	private String password;
 	private String nombre;
 	private String telefono;
 	
-	protected Usuario() {
+	public Usuario() {
 		
 	}
 	
-	protected Usuario(String correo,String password,String nombre,String telefono) {
-		this.correo= correo;
+	public Usuario(String correo,String password,String nombre, String telefono) {
+		this.correo = correo;
 		this.password = password;
-		this.nombre= nombre;
+		this.nombre = nombre;
 		this.telefono = telefono;
 		
 	}
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -67,8 +67,6 @@ public class Usuario {
 	public void setTelefono(String telefono) {
 		this.telefono = telefono;
 	}
-	
-	
 	
 	
 	

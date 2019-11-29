@@ -1,0 +1,1 @@
+Esta es una API REST para los servicios de Novel Estudio.

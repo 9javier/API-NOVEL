@@ -1,43 +1,45 @@
 package com.example.prueba2.Modelo;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-
-@Document(collection="sesiones")
+@Entity
+@Table(name ="sesiones")
 public class Sesiones {
 	
-	@Id
+	@javax.persistence.Id
 	@NotNull
-	private String id;
-	private String idusuario;
+	private int id;
+	private int idusuario;
 	private String fecha;
 	
 	public Sesiones() {
 		
 	}
 	
-	protected  Sesiones(String id_usuario,String fecha) {
-		this.idusuario = id_usuario;
-		this.fecha = fecha;
+	protected Sesiones(int id,int idusuario,String fecha) {
+		this.id=id;
+		this.idusuario =idusuario;
+		this.fecha= fecha;
+		
 	}
 
-	public String getId() {
+
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
-	public String getId_usuario() {
+	public int getIdusuario() {
 		return idusuario;
 	}
 
-	public void setId_usuario(String id_usuario) {
-		this.idusuario = id_usuario;
+	public void setIdusuario(int idusuario) {
+		this.idusuario = idusuario;
 	}
 
 	public String getFecha() {

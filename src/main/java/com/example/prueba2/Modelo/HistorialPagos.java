@@ -1,38 +1,42 @@
 package com.example.prueba2.Modelo;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection="historial")
+@Entity
+@Table(name="histpagos")
 public class HistorialPagos {
 	
 	@Id
 	@NotNull
-	private String id;
+	private int id;
 	private int codigo;
 	private String Productos;
 	private String Fecha;
+	private String nombre;
+	private String grupo;
 	
-	protected HistorialPagos() {
+	public HistorialPagos() {
 		
 	}
 	
-	public HistorialPagos(int CodigoCuenta,String Productos, String Fecha) {
+	public HistorialPagos(int id,int CodigoCuenta,String Productos, String Fecha, String nombre,String grupo) {
+		this.id=id;
 		this.codigo = CodigoCuenta;
 		this.Productos = Productos;
 		this.Fecha = Fecha;
+		this.nombre= nombre;
+		this.grupo = grupo;
 	}
 
-	
-
-
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
@@ -58,6 +62,22 @@ public class HistorialPagos {
 
 	public void setFecha(String fecha) {
 		Fecha = fecha;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public String getGrupo() {
+		return grupo;
+	}
+
+	public void setGrupo(String grupo) {
+		this.grupo = grupo;
 	}
 	
 	

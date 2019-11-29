@@ -1,16 +1,19 @@
 package com.example.prueba2.Modelo;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection="cargos")
+
+@Entity
+@Table(name ="cargos")
 public class Cargos {
 
 	@Id
 	@NotNull
-	private String id;
+	private int id;
 	private String nombre;
 	private String productos;
 	private double total;
@@ -18,7 +21,7 @@ public class Cargos {
 	private String grupo;
 	private String email;
 	
-	protected Cargos() {
+	public Cargos() {
 		
 	}
 	
@@ -32,11 +35,11 @@ public class Cargos {
 		
 	}
 
-	public String getId() {
+	public int getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 

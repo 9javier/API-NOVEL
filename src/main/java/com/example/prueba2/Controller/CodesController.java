@@ -3,9 +3,7 @@ package com.example.prueba2.Controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +13,12 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.example.prueba2.Modelo.Codes;
 import com.example.prueba2.Repository.CodesRepository;
+
 
 
 @RestController
@@ -25,6 +26,7 @@ import com.example.prueba2.Repository.CodesRepository;
 @CrossOrigin(origins = "*",methods= {RequestMethod.GET,RequestMethod.POST,RequestMethod.PUT,RequestMethod.DELETE})
 public class CodesController {
 	
+	@Autowired
 	private CodesRepository codesRepository;
 	
 	
@@ -33,35 +35,38 @@ public class CodesController {
 	}
 	
 	@GetMapping("/all")
-	public Integer getAll(){
-		List<Codes> codes = codesRepository.findAll();
+	public @ResponseBody Integer getAll(){
+		List<Codes> codes = (List<Codes>) codesRepository.findAll();
 		int codigo = (codes.get(0).getCodigo()+1);
 		return codigo;
 	}
 	@PostMapping
-	public void insertCodes(@RequestBody Codes codes) {
-		this.codesRepository.insert(codes);
+	public @ResponseBody String insertCodes(@RequestBody Codes codes) {
+		this.codesRepository.save(codes);
+		return "code inserted";
 	}
 	
 	@PutMapping("/{codigo}")
-	public void updateCodes(@RequestBody Codes codes) {
+	public @ResponseBody String updateCodes(@RequestBody Codes codes) {
 		this.codesRepository.save(codes);
+		return "code updated";
 	}
 	
 	@GetMapping("/{codigo}")
-	public void updateByCodigo(@PathVariable("codigo")int codigo){
+	public @ResponseBody String updateByCodigo(@PathVariable("codigo")int codigo){
 		List<Codes> codes = codesRepository.findByCodigo(codigo, null);
 		int code = (codes.get(0).getCodigo()+1);
-		String id = codes.get(0).getId().toString();
+		int id = codes.get(0).getId();
 		Codes  c=new Codes();
 		c.setId(id);
 		c.setCodigo(code);
 		updateCodes(c);
 		
+		return "code updated";
+		
 	}
 	
-
-	
+	@Transactional
 	@DeleteMapping("/{codigo}")//Eliminar codigo
 	public void deleteCodigo(@PathVariable("codigo") int codigo) {
 		this.codesRepository.deleteByCodigo(codigo,null);
